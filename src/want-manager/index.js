@@ -51,7 +51,7 @@ module.exports = class WantManager {
 
     const mq = this.peers.get(peerId.toB58String())
     mq.addMessage(msg)
-    console.log('sending Response ', msg)
+    this._log('sending Response ', msg)
 
     this.peers.set(peerId.toB58String(), mq)
     return mq

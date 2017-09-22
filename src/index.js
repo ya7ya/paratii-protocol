@@ -52,7 +52,7 @@ class Protocol {
 
   // handle messages received through the network
   _receiveMessage (peerId, incoming, callback) {
-    console.log(`received MSG from ${peerId.toB58String()} ${incoming.hello.eth.toString()}`)
+    this._log(`received MSG from ${peerId.toB58String()} ${incoming.hello.eth.toString()}`)
     this.notifications.receivedMsg(peerId, incoming)
 
     if (incoming.fragments.size === 0) {
@@ -65,12 +65,12 @@ class Protocol {
       switch (fragment.type) {
         case 1:
           // command
-          console.log(`received Command : ${fragment.payload.toString()}`)
+          this._log(`received Command : ${fragment.payload.toString()}`)
           this._processCommand(peerId, fragment)
           break
         case 2:
           // response
-          console.log(`received response ${fragment.tid.toString()} : ${fragment.payload.toString()}`)
+          this._log(`received response ${fragment.tid.toString()} : ${fragment.payload.toString()}`)
           this._processResponse(peerId, fragment)
           break
         default:
@@ -89,7 +89,7 @@ class Protocol {
     })
     switch (command.payload.toString()) {
       case 'test':
-        console.log('sending ok #', command.tid.toString())
+        this._log('sending ok #', command.tid.toString())
         msg.addResponse('OK', command.tid.toString())
         break
       default:
@@ -101,18 +101,18 @@ class Protocol {
     // if (this.network && this.network._running) {
     //   this.network.sendMessage(peerId, msg, (err) => {
     //     if (err) throw err
-    //     console.log('msg sent')
+    //     this._log('msg sent')
     //   })
     // } else {
-    //   console.log('network is not running yet.')
+    //   this._log('network is not running yet.')
     // }
   }
 
   _processResponse (peerId, response) {
     if (!this.commandsList[response.tid.toString()]) {
-      console.log('TID NOT FOUND tid: ', response.tid.toString())
+      this._log('TID NOT FOUND tid: ', response.tid.toString())
     } else {
-      console.log('got response for ', response.tid.toString(), ': ', response.payload.toString())
+      this._log('got response for ', response.tid.toString(), ': ', response.payload.toString())
     }
   }
 
@@ -125,7 +125,7 @@ class Protocol {
     })
     this.commandsList[tid] = cmd
     msg.addCommand(cmd, tid)
-    console.log('command created: tid: ', tid, msg)
+    this._log('command created: tid: ', tid, msg)
     return msg
   }
 

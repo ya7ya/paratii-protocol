@@ -179,7 +179,6 @@ ParatiiMessage.deserialize = (raw, callback) => {
   let decoded
   try {
     decoded = pbm.Message.decode(raw)
-    console.log('decoded: ', decoded)
   } catch (err) {
     return setImmediate(() => callback(err))
   }
