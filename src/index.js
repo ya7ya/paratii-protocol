@@ -22,7 +22,7 @@ const Message = require('./types/message')
  * @param {Blockstore} blockstore
  */
 class Protocol {
-  constructor (libp2p, blockstore) {
+  constructor (libp2p, blockstore, ethAddress) {
     this._libp2p = libp2p
     this._log = logger(this.peerInfo.id)
 
@@ -30,6 +30,7 @@ class Protocol {
     this.network = new Network(libp2p, this)
 
     this.commandsList = {}
+    this.ethAddress = ethAddress || 'address placeholder'
     // local database
     // this.blockstore = blockstore
 
@@ -83,7 +84,7 @@ class Protocol {
   _processCommand (peerId, command) {
     let msg = new Message({
       hello: {
-        eth: 'some eth address'
+        eth: this.ethAddress
       }
     })
     switch (command.payload.toString()) {
@@ -119,7 +120,7 @@ class Protocol {
     let tid = String(Math.random())
     let msg = new Message({
       hello: {
-        eth: 'some eth address'
+        eth: this.ethAddress
       }
     })
     this.commandsList[tid] = cmd

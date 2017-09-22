@@ -20,7 +20,7 @@ const orderedFinish = require('./utils/helpers').orderedFinish
 
 const Msg = require('../src/types/message')
 // Creates a repo + libp2pNode + Bitswap with or without DHT
-function createThing (dht, callback) {
+function createThing (dht, ethAddress, callback) {
   waterfall([
     (cb) => createTempRepo(cb),
     (repo, cb) => {
@@ -29,7 +29,7 @@ function createThing (dht, callback) {
       }, (err, node) => cb(err, repo, node))
     },
     (repo, libp2pNode, cb) => {
-      const bitswap = new Bitswap(libp2pNode, repo.blocks)
+      const bitswap = new Bitswap(libp2pNode, repo.blocks, ethAddress)
       bitswap.start((err) => cb(err, repo, libp2pNode, bitswap))
     }
   ], (err, repo, libp2pNode, bitswap) => {
@@ -50,9 +50,9 @@ describe('bitswap without DHT', function () {
 
   before((done) => {
     parallel([
-      (cb) => createThing(false, cb),
-      (cb) => createThing(false, cb),
-      (cb) => createThing(false, cb)
+      (cb) => createThing(false, 'node0', cb),
+      (cb) => createThing(false, 'node1', cb),
+      (cb) => createThing(false, 'node2', cb)
     ], (err, results) => {
       expect(err).to.not.exist()
       expect(results).to.have.length(3)
@@ -123,9 +123,9 @@ describe('bitswap with DHT', function () {
 
   before((done) => {
     parallel([
-      (cb) => createThing(true, cb),
-      (cb) => createThing(true, cb),
-      (cb) => createThing(true, cb)
+      (cb) => createThing(true, 'node0', cb),
+      (cb) => createThing(true, 'node1', cb),
+      (cb) => createThing(true, 'node2', cb)
     ], (err, results) => {
       expect(err).to.not.exist()
       expect(results).to.have.length(3)
