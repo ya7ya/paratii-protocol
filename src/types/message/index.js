@@ -27,18 +27,28 @@ class ParatiiMessage {
     return (!this.hello)
   }
 
-  addCommand (cmd, tid) {
+  addCommand (cmd, tid, args) {
     if (!tid) {
       tid = String(Math.random())
     } else {
       tid = tid.toString()
     }
 
-    this.fragments.set(tid, {
-      type: 1,
-      tid: Buffer.from(tid),
-      payload: Buffer.from(cmd)
-    })
+    if (args) {
+      console.log('[addCommand] adding args to command ', args)
+      this.fragments.set(tid, {
+        type: 1,
+        tid: Buffer.from(tid),
+        payload: Buffer.from(cmd),
+        args: Buffer.from(args)
+      })
+    } else {
+      this.fragments.set(tid, {
+        type: 1,
+        tid: Buffer.from(tid),
+        payload: Buffer.from(cmd)
+      })
+    }
   }
 
   addResponse (response, tid) {
@@ -191,11 +201,11 @@ ParatiiMessage.deserialize = (raw, callback) => {
       switch (fragment.type) {
         case 1:
           // command
-          msg.addCommand(fragment.payload, fragment.tid.toString())
+          msg.addCommand(fragment.payload, fragment.tid.toString(), fragment.args)
           break
         case 2:
           // response
-          msg.addResponse(fragment.payload, fragment.tid.toString())
+          msg.addResponse(fragment.payload, fragment.tid.toString(), fragment.args)
           break
         default:
           throw new Error('unknown fragment type')

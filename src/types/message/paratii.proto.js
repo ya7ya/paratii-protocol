@@ -23,6 +23,10 @@ module.exports = `
 
     message Hello {
       required bytes eth = 1;
+      optional uint32 dropAt = 2;
+      optional uint32 payAt = 3;
+      optional uint32 buyAt = 4;
+      optional uint32 sellAt = 5;
     }
 
     message Fragment {

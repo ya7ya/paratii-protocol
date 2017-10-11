@@ -208,4 +208,44 @@ describe('bitswap with DHT', function () {
       if (err) throw err
     })
   })
+
+  it('send Paratii TRANSCODE Msg 0 -> 1 : and get response OK', (done) => {
+    let msgOriginal = nodes[0].bitswap.createCommand('transcode', {hash: 'test hash', author: 'test author'})
+    console.log('msg: ', msgOriginal)
+    nodes[1].bitswap.notifications.on('message:new', (peerId, msg) => {
+      expect(peerId.toB58String()).to.equal(nodes[0].libp2pNode.peerInfo.id.toB58String())
+      expect(msg).to.exist()
+      expect(msg.fragments).to.exist()
+      expect(msg.fragments.values()).to.exist()
+      expect(Array.from(msg.fragments.values())).to.have.lengthOf(1)
+      expect(Array.from(msg.fragments.values())[0].tid).to.exist()
+      let fragArray = Array.from(msg.fragments.values())
+      console.log('fragments :', fragArray.map((frag, i) => {
+        return {
+          tid: frag.tid,
+          payload: frag.payload.toString(),
+          args: (frag.args) ? frag.args.toString() : null
+        }
+      }))
+      // console.log('fragments', msg.fragments)
+    })
+
+    nodes[0].bitswap.notifications.on('message:new', (peerId, msg) => {
+      expect(peerId.toB58String()).to.equal(nodes[1].libp2pNode.peerInfo.id.toB58String())
+      expect(msg).to.exist()
+      expect(msg.fragments).to.exist()
+      expect(msg.fragments.values()).to.exist()
+      expect(Array.from(msg.fragments.values())).to.have.lengthOf(1)
+      expect(Array.from(msg.fragments.values())[0]['payload']).to.deep.equal(Buffer.from('OK'))
+      expect(Array.from(msg.fragments.values())[0]['type']).to.equal(2)
+      let frag = Array.from(msg.fragments.values())[0]
+      if (frag.tid.toString() === Array.from(msgOriginal.fragments.values())[0]['tid'].toString()) {
+        done()
+      }
+    })
+
+    nodes[0].bitswap.network.sendMessage(nodes[1].libp2pNode.peerInfo.id, msgOriginal, (err) => {
+      if (err) throw err
+    })
+  })
 })

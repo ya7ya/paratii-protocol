@@ -92,6 +92,13 @@ class Protocol {
         this._log('sending ok #', command.tid.toString())
         msg.addResponse('OK', command.tid.toString())
         break
+      case 'transcode':
+        // let args = JSON.parse(command.args)
+        this._log('received TRANSCODE command, .. pulling file, args: ' + JSON.stringify(command))
+        console.log('received TRANSCODE command, .. pulling file, args: ' + JSON.stringify(command))
+        msg.addResponse('OK', command.tid.toString())
+        // TODO Trigger Transcoding process here.
+        break
       default:
         throw new Error('unknown command')
     }
@@ -116,7 +123,7 @@ class Protocol {
     }
   }
 
-  createCommand (cmd) {
+  createCommand (cmd, args) {
     let tid = String(Math.random())
     let msg = new Message({
       hello: {
@@ -124,7 +131,13 @@ class Protocol {
       }
     })
     this.commandsList[tid] = cmd
-    msg.addCommand(cmd, tid)
+    if (args) {
+      args = JSON.stringify(args)
+      console.log('adding args to command, ', args)
+      msg.addCommand(cmd, tid, args)
+    } else {
+      msg.addCommand(cmd, tid)
+    }
     this._log('command created: tid: ', tid, msg)
     return msg
   }
