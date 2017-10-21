@@ -98,6 +98,7 @@ class Protocol {
         console.log('received TRANSCODE command, .. pulling file, args: ' + JSON.stringify(command))
         msg.addResponse('OK', command.tid.toString())
         // TODO Trigger Transcoding process here.
+        this.notifications.receivedTranscode(peerId, command)
         break
       default:
         throw new Error('unknown command')
@@ -150,7 +151,7 @@ class Protocol {
   // handle new peers
   _onPeerConnected (peerId) {
     this.wm.connected(peerId)
-    this._log('_onPeerConnected ' + peerId)
+    this._log('_onPeerConnected ' + peerId.toB58String())
   }
 
   // handle peers being disconnected
