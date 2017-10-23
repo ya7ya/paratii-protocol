@@ -36,6 +36,10 @@ class Notifications extends EventEmitter {
     this.emit('command:transcode', peerId, command)
   }
 
+  receivedCommand (peerId, command) {
+    this.emit('command', peerId, command)
+  }
+
   /**
    * Signal the system that we received `block`.
    *

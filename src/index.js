@@ -101,7 +101,9 @@ class Protocol {
         this.notifications.receivedTranscode(peerId, command)
         break
       default:
-        throw new Error('unknown command')
+        this._log('received command, args: ' + JSON.stringify(command))
+        this.notifications.receivedCommand(peerId, command)
+        // throw new Error('unknown command')
     }
 
     this.wm._sendResponse(peerId, msg)
