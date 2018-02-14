@@ -21,7 +21,7 @@ module.exports = class MsgQueue {
     if (msg.empty) {
       return
     }
-    console.log('send msg: ', new Date().toString())
+    this._log('send msg: ', new Date().toString())
     this.send(msg)
   }
 
@@ -49,14 +49,14 @@ module.exports = class MsgQueue {
   // }
 
   send (msg) {
-    console.log(this.selfPeerId.toB58String(), ' => ', this.peerId.toB58String())
+    this._log(this.selfPeerId.toB58String(), ' => ', this.peerId.toB58String())
     this.network.connectTo(this.peerId, (err) => {
       if (err) {
         this._log.error('cant connect to peer %s: %s', this.peerId.toB58String(), err.message)
         return
       }
 
-      console.log('sending message')
+      this._log('sending message')
       this.network.sendMessage(this.peerId, msg, (err) => {
         if (err) {
           this._log.error('send error: %s', err.message)

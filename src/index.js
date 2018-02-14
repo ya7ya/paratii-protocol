@@ -95,7 +95,7 @@ class Protocol {
       case 'transcode':
         // let args = JSON.parse(command.args)
         this._log('received TRANSCODE command, .. pulling file, args: ' + JSON.stringify(command))
-        console.log('received TRANSCODE command, .. pulling file, args: ' + JSON.stringify(command))
+        // console.log('received TRANSCODE command, .. pulling file, args: ' + JSON.stringify(command))
         msg.addResponse('OK', command.tid.toString())
         // TODO Trigger Transcoding process here.
         this.notifications.receivedTranscode(peerId, command)
@@ -136,7 +136,7 @@ class Protocol {
     this.commandsList[tid] = cmd
     if (args) {
       args = JSON.stringify(args)
-      console.log('adding args to command, ', args)
+      // console.log('adding args to command, ', args)
       msg.addCommand(cmd, tid, args)
     } else {
       msg.addCommand(cmd, tid)

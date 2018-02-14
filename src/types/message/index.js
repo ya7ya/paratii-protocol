@@ -35,7 +35,7 @@ class ParatiiMessage {
     }
 
     if (args) {
-      console.log('[addCommand] adding args to command ', args)
+      // console.log('[addCommand] adding args to command ', args)
       this.fragments.set(tid, {
         type: 1,
         tid: Buffer.from(tid),
