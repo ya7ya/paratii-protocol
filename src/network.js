@@ -123,20 +123,27 @@ class Network {
 
     const stringId = peer.toB58String() ? peer.toB58String() : peer.id.toB58String()
     this._log('sendMessage to %s', stringId, msg)
-    this.connectTo(peer, (err, conn, protocol) => {
+
+    this._dialPeer(peer, (err, conn, protocol) => {
       if (err) {
-        this._log('connectTo error :', err)
+        return callback(err)
       }
-      let serialized = msg.serializeToParatii()
+
+      let serialized
+      switch (protocol) {
+        case PARATII001:
+          serialized = msg.serializeToParatii()
+          break
+        default:
+          return callback(new Error('Unkown protocol: ' + protocol))
+      }
       // TODO: why doesn't the error get propageted back??
       writeMessage(conn, serialized, (err) => {
         if (err) {
           this._log.error(err)
         }
       })
-      setTimeout(() => {
-        callback()
-      }, 1)
+      callback()
     })
   }
 
